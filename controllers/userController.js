@@ -14,16 +14,19 @@ export const register = async (req, res) => {
             return res.status(400).json({ error: 'User already exists' });
         }
 
-        // Create user
-        const user = await User.create({
-        username,
-        email,
-        password
-        });
+        const userData = {
+            username,
+            email,
+            password
+        };
 
-        if (role &&['user', 'admin'].includes(role)) {
-            user.role = role;
+        // Add role if provided and valid
+        if (role && ['user', 'admin'].includes(role)) {
+            userData.role = role;
         }
+
+        // Create and save user with all data at once
+        const user = await User.create(userData);
 
     // Generate token
         const token = generateToken(user._id);
